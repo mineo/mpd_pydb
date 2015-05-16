@@ -1,5 +1,5 @@
 Welcome to mpd_pydb's documentation!
-================================
+====================================
 
 Contents:
 
@@ -7,6 +7,7 @@ Contents:
    :maxdepth: 2
 
    setup
+   usage
 
 API:
 
@@ -20,4 +21,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-

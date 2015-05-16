@@ -33,7 +33,7 @@ def update_version_py():
         return
     ver = stdout.strip()
     f = open("mpd_pydb/version.py", "w")
-    f.write(VERSION_PY % ver)
+    f.write(VERSION_PY % ver.decode())
     f.close()
     print("set mpd_pydb/version.py to '%s'" % ver)
 
@@ -98,7 +98,8 @@ setup(name="mpd_pydb",
                    "License :: OSI Approved :: MIT License",
                    "Natural Language :: English",
                    "Operating System :: OS Independent",
-                   "Programming Language :: Python :: 2.7"],
+                   "Programming Language :: Python :: 2.7",
+                   "Programming Language :: Python :: 3.4"],
       cmdclass={"version": Version, "sdist": sdist, "build": build},
       description="Module for reading an MPD database",
       long_description=open("README.rst").read(),
