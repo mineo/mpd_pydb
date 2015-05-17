@@ -38,8 +38,8 @@ class Database(object):
         self.mpd_version = mpd_version
         #: A :class:`list` of songs in this database
         self.songs = songs or []
-        #: A :class:`frozenset` containing the names of all supported tags
-        self.supported_tags = frozenset(supported_tags)
+        #: A :class:`list` containing the names of all supported tags
+        self.supported_tags = supported_tags
 
     def add_song(self, song):
         """
@@ -89,16 +89,43 @@ class Database(object):
                     format = int(value)
                 elif key == "mpd_version":
                     mpd_version = value
+                elif key == "Time":
+                    current_song_tags[key] = float(value)
+                elif key == "mtime":
+                    current_song_tags[key] = int(value)
                 elif key in tag_names:
                     current_song_tags[key] = value
 
         return db
 
+    @staticmethod
+    def _extract(series, index):
+        def extractor(value):
+            if value is None:
+                return value
+            if "/" not in value:
+                if index == 0:
+                    return value
+                else:
+                    return None
+            return int(value.split("/", 1)[index])
+        return series.apply(extractor)
+
     def to_dataframe(self):
         """
-        Convert this database to a pandas DataFrame.
+        Convert this database to a pandas DataFrame. In addition to the tags
+        already loaded, the two columns ``TotalDiscs`` and ``TotalTracks`` will
+        be populated with the values from ``Disc`` and ``Track`` tags
+        (ID3 only). The ``Disc`` and ``Track`` tags will no longer contain
+        information about the total amount of discs and tracks after the
+        conversion.
 
         :rtype: :class:`~pd:pandas.DataFrame`
+
         """
         import pandas as pd
-        return pd.DataFrame(self.songs, columns=self.supported_tags)
+        df = pd.DataFrame.from_records(self.songs, columns=self.supported_tags)
+        return df.assign(Track=self._extract(df["Track"], 0),
+                         TotalTracks=self._extract(df["Track"], 1),
+                         Disc=self._extract(df["Disc"], 0),
+                         TotalDiscs=self._extract(df["Disc"], 1))
