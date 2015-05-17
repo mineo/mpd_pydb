@@ -3,6 +3,7 @@
 # Copyright © 2015 Wieland Hoffmann
 # License: MIT, see LICENSE for details
 import pytest
+pytest.importorskip("pandas")
 
 from collections import namedtuple
 from mpd_pydb import db as mpd_db
