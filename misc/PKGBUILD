@@ -9,6 +9,7 @@ source=('git+https://github.com/mineo/mpd_pydb')
 md5sums=('SKIP')
 depends=('python2')
 makedepends=('git')
+optdepends=('python2-pandas: For conversion to dataframes')
 
 pkgver(){
   cd "${srcdir}/mpd_pydb"
