@@ -33,7 +33,8 @@ autodoc_default_flags = ["members", "undoc-members", "show-inheritance"]
 autoclass_content = "both"
 
 intersphinx_mapping = {'python': ('https://docs.python.org/2.7', None),
-                       'pd': ('http://pandas.pydata.org/pandas-docs/stable', None)}
+                       'pd': ('http://pandas.pydata.org/pandas-docs/stable', None),
+                       'pathlib': ('https://pathlib.readthedocs.org/en/1.0.1/', None)}
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
