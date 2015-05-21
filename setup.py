@@ -4,6 +4,7 @@ import os, subprocess, re
 from setuptools import setup, Command
 from setuptools.command.sdist import sdist as _sdist
 from distutils.command.build import build as _build
+from sys import version_info
 
 # The following code is taken from
 # https://github.com/warner/python-ecdsa/blob/f03abf93968019758c6e00753d1b34b87fecd27e/setup.py
@@ -85,6 +86,11 @@ class build(_build):
 
 # Here ends the code taken from Brian Warner
 
+if version_info < (3,3):
+    requirements = ["pathlib"]
+else:
+    requirements = []
+
 setup(name="mpd_pydb",
       version=get_version(),
       author="Wieland Hoffmann",
@@ -103,6 +109,7 @@ setup(name="mpd_pydb",
       cmdclass={"version": Version, "sdist": sdist, "build": build},
       description="Module for reading an MPD database",
       long_description=open("README.rst").read(),
+      install_requires=requirements,
       extras_require={
           'docs': ['sphinx']
       }

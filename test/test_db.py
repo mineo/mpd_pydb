@@ -7,6 +7,7 @@ import pytest
 
 
 from io import BytesIO
+from pathlib import Path
 
 
 @pytest.fixture
@@ -23,12 +24,13 @@ def test_mpd_version(db):
 
 
 def test_number_of_songs(db):
-    assert len(db.songs) == 10
+    assert len(db.songs) == 12
 
 
 def test_supported_tags(db):
     expected = ["Time",
                 "mtime",
+                "path",
                 "Artist",
                 "Album",
                 "AlbumArtist",
@@ -72,7 +74,9 @@ def test_tag_values(db):
                 "MUSICBRAINZ_ARTISTID": "fc85edee-2156-4b4a-a4b5-6a0bf2882a7b",
                 "MUSICBRAINZ_TRACKID": "e31e6049-8b14-4789-a2e5-7933acc9bcf2",
                 "Track": "1",
-                "mtime": 1426723027}
+                "mtime": 1432207804,
+                "path": Path("_ensnare_") /
+                "2011 - Impeccable Micro" / "01 - Intro.flac"}
 
     for tag, value in expected.items():
         assert getattr(song, tag) == value
@@ -107,3 +111,15 @@ def test_mpd_version_check(monkeypatch):
     with pytest.raises(ValueError):
         mpd_pydb.Database(mpd_pydb.db._SUPPORTED_FORMAT_VERSION,
                           None, supported_tags=[])
+
+
+def test_path_nested(db):
+    expected = Path("Anamanaguchi") / "Pop It.mp3"
+    assert db.songs[-1].path == expected
+
+
+def test_path_non_ascii(db):
+    path = db.songs[8].path
+    assert path == (Path("_ensnare_") /
+                    "2011 - Impeccable Micro" /
+                    "09 - Gavin’s Magical Rainbow Catastrophe.flac")

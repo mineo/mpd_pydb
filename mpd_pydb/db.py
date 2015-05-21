@@ -8,11 +8,17 @@ MPD PyDB
 """
 from collections import namedtuple
 from gzip import open
+from pathlib import Path
+from sys import version_info
 
 
 _SUPPORTED_FORMAT_VERSION = 2
+_DIRECTORY_BEGIN = "begin"
+_DIRECTORY_END = "end"
 _SONG_BEGIN = "song_begin"
 _SONG_END = "song_end"
+
+_PY2 = version_info < (3,)
 
 
 class Database(object):
@@ -58,13 +64,14 @@ class Database(object):
 
         :param str filename: The path to the database file
         """
+        current_directory = None
         current_song = None
         current_song_tags = {}
         db = None
         format = 0
         mpd_version = None
         song_type = None
-        tag_names = ["Time", "mtime"]
+        tag_names = ["Time", "mtime", "path"]
 
         with open(filename, "r") as db_file:
             for line in db_file.readlines():
@@ -74,6 +81,8 @@ class Database(object):
                 if key == "info_end":
                     db = cls(format, mpd_version, tag_names)
                     song_type = namedtuple("Song", tag_names)
+                elif key == _DIRECTORY_END:
+                    current_directory = current_directory.parent
                 elif key == _SONG_BEGIN:
                     current_song_tags = {tag: None for tag in tag_names}
                 elif key == _SONG_END:
@@ -91,6 +100,19 @@ class Database(object):
                     format = int(value)
                 elif key == "mpd_version":
                     mpd_version = value
+                elif key == _DIRECTORY_BEGIN:
+                    current_directory = Path(value)
+                elif key == _SONG_BEGIN:
+                    if _PY2:
+                        filename = value.encode("utf-8")
+                    else:
+                        filename = value
+                    if current_directory is not None:
+                        current_song_tags["path"] = (current_directory /
+                                                     filename)
+                    else:
+                        # Songs in MPDs music root are not in any directory
+                        current_song_tags["path"] = Path(filename)
                 elif key == "Time":
                     current_song_tags[key] = float(value)
                 elif key == "mtime":
