@@ -11,6 +11,8 @@ from gzip import open
 
 
 _SUPPORTED_FORMAT_VERSION = 2
+_SONG_BEGIN = "song_begin"
+_SONG_END = "song_end"
 
 
 class Database(object):
@@ -72,9 +74,9 @@ class Database(object):
                 if key == "info_end":
                     db = cls(format, mpd_version, tag_names)
                     song_type = namedtuple("Song", tag_names)
-                elif key == "song_begin":
+                elif key == _SONG_BEGIN:
                     current_song_tags = {tag: None for tag in tag_names}
-                elif key == "song_end":
+                elif key == _SONG_END:
                     current_song = song_type(**current_song_tags)
                     db.add_song(current_song)
 
