@@ -1,5 +1,5 @@
 pkgname=mpd_pydb-git
-pkgver=1
+pkgver=5fa3bfe
 pkgrel=1
 pkgdesc=""
 arch=("any")
@@ -8,7 +8,7 @@ license=('MIT')
 source=('git+https://github.com/mineo/mpd_pydb')
 md5sums=('SKIP')
 depends=('python2')
-makedepends=('git')
+makedepends=('git' 'python2-setuptools')
 optdepends=('python2-pandas: For conversion to dataframes')
 
 pkgver(){
