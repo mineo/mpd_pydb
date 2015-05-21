@@ -15,8 +15,14 @@ from sys import version_info
 _SUPPORTED_FORMAT_VERSION = 2
 _DIRECTORY_BEGIN = "begin"
 _DIRECTORY_END = "end"
+_FORMAT = "format"
+_INFO_END = "info_end"
+_MPD_VERSION = "mpd_version"
+_MTIME = "mtime"
 _SONG_BEGIN = "song_begin"
 _SONG_END = "song_end"
+_TAG = "tag"
+_TIME = "Time"
 
 _PY2 = version_info < (3,)
 
@@ -78,7 +84,7 @@ class Database(object):
                 split_line = line.decode("utf-8").strip().split(":", 1)
 
                 key = split_line[0]
-                if key == "info_end":
+                if key == _INFO_END:
                     db = cls(format, mpd_version, tag_names)
                     song_type = namedtuple("Song", tag_names)
                 elif key == _DIRECTORY_END:
@@ -94,11 +100,11 @@ class Database(object):
                     continue
 
                 value = split_line[1].strip()
-                if key == "tag":
+                if key == _TAG:
                     tag_names.append(value)
-                elif key == "format":
+                elif key == _FORMAT:
                     format = int(value)
-                elif key == "mpd_version":
+                elif key == _MPD_VERSION:
                     mpd_version = value
                 elif key == _DIRECTORY_BEGIN:
                     current_directory = Path(value)
@@ -113,9 +119,9 @@ class Database(object):
                     else:
                         # Songs in MPDs music root are not in any directory
                         current_song_tags["path"] = Path(filename)
-                elif key == "Time":
+                elif key == _TIME:
                     current_song_tags[key] = float(value)
-                elif key == "mtime":
+                elif key == _MTIME:
                     current_song_tags[key] = int(value)
                 elif key in tag_names:
                     current_song_tags[key] = value
