@@ -26,3 +26,8 @@ mtime
 path
     The path to the file inside of MPDs music directory as an
     :class:`~pathlib:pathlib.Path` object
+
+music_dir\_
+    The absolute path to the music directory on the local hard drive. This is
+    used to implement support for :pep:`519`'s :func:`os.PathLike.__fspath__`
+    method on the song objects.

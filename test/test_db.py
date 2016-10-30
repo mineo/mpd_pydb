@@ -1,18 +1,33 @@
 #!/usr/bin/env python
 # coding: utf-8
-# Copyright © 2015 Wieland Hoffmann
+# Copyright © 2015, 2016 Wieland Hoffmann
 # License: MIT, see LICENSE for details
 import mpd_pydb
 import pytest
 
 
 from io import BytesIO
+from os.path import join
 from pathlib import Path
+
+try:
+    from os import fspath
+except Exception:
+    def fspath(obj):
+        _type = type(obj)
+        path = _type.__fspath__(obj)
+        return path
 
 
 @pytest.fixture
 def db():
     return mpd_pydb.Database.read_file("test/mpd.db.gz")
+
+
+@pytest.fixture
+def db_with_music_dir():
+    return mpd_pydb.Database.read_file("test/mpd.db.gz",
+                                       music_dir="/home/test/Musik")
 
 
 def test_db_format(db):
@@ -97,7 +112,7 @@ def gzip_read_mock(format):
 
 
 @pytest.mark.parametrize("format",
-                          list(range(0, 10)))
+                         list(range(0, 10)))
 def test_format_check(format, monkeypatch):
     if format == mpd_pydb.db._SUPPORTED_FORMAT_VERSION:
         pytest.skip()
@@ -123,3 +138,17 @@ def test_path_non_ascii(db):
     assert path == (Path("_ensnare_") /
                     "2011 - Impeccable Micro" /
                     "09 - Gavin’s Magical Rainbow Catastrophe.flac")
+
+
+def test_fspath_without_music_dir(db):
+    with pytest.raises(NotImplementedError):
+        song = db.songs[0]
+        _type = type(song)
+        _type.__fspath__(song)
+
+
+def test_fspath_with_music_dir(db_with_music_dir):
+    song = db_with_music_dir.songs[0]
+    path = fspath(song)
+    assert path == join("/home", "test", "Musik", "_ensnare_",
+                        "2011 - Impeccable Micro", "01 - Intro.flac")

@@ -9,8 +9,8 @@ MPD PyDB
 from collections import namedtuple
 from gzip import open
 from pathlib import Path
+from os.path import join
 from sys import version_info
-
 
 _SUPPORTED_FORMAT_VERSION = 2
 _DIRECTORY_BEGIN = "begin"
@@ -64,11 +64,12 @@ class Database(object):
         self.songs.append(song)
 
     @classmethod
-    def read_file(cls, filename):
+    def read_file(cls, filename, music_dir=None):
         """
         Read the database in ``filename``.
 
         :param str filename: The path to the database file
+        :param str music_dir: The path to MPDs music directory
         """
         current_directory = None
         current_song = None
@@ -86,13 +87,23 @@ class Database(object):
                 key = split_line[0]
                 if key == _INFO_END:
                     db = cls(format, mpd_version, tag_names)
-                    song_type = namedtuple("Song", tag_names)
+
+                    class Song(namedtuple("Song",
+                                          tag_names + ["music_dir_"])):
+                        def __fspath__(self):
+                            if self.music_dir_ is None:
+                                raise NotImplementedError
+
+                            return join(self.music_dir_, str(self.path))
+
+                    song_type = Song
                 elif key == _DIRECTORY_END:
                     current_directory = current_directory.parent
                 elif key == _SONG_BEGIN:
                     current_song_tags = {tag: None for tag in tag_names}
                 elif key == _SONG_END:
-                    current_song = song_type(**current_song_tags)
+                    current_song = song_type(music_dir_=music_dir,
+                                             **current_song_tags)
                     db.add_song(current_song)
 
                 if len(split_line) == 1:
