@@ -1,0 +1,18 @@
+language: python
+env:
+  - TOXENV=py27
+  - TOXENV=py27-pandas
+  - TOXENV=py34
+  - TOXENV=py34-pandas
+  - TOXENV=py35
+  - TOXENV=py35-pandas
+  - TOXENV=py36
+  - TOXENV=py36-pandas
+  - TOXENV=pypy
+  - TOXENV=pypy-pandas
+  - TOXENV=flake8
+  - TOXENV=docs
+install:
+  - travis_retry pip install tox
+script:
+  - travis_retry tox
