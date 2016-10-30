@@ -10,7 +10,6 @@ env:
   - TOXENV=py36
   - TOXENV=py36-pandas
   - TOXENV=pypy
-  - TOXENV=pypy-pandas
   - TOXENV=flake8
   - TOXENV=docs
 install:
