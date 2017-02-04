@@ -24,10 +24,11 @@ setup(name="mpd_pydb",
                    "Programming Language :: Python :: 3.4"],
       description="Module for reading an MPD database",
       long_description=open("README.rst").read(),
-      setup_requires=["setuptools_scm"],
+      setup_requires=["setuptools_scm", "pytest-runner"],
       use_scm_version={"write_to": "mpd_pydb/version.py"},
       install_requires=requirements,
       extras_require={
           'docs': ['sphinx']
-      }
+      },
+      tests_require=["pytest"],
       )
