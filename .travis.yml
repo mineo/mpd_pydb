@@ -8,6 +8,8 @@ env:
   - TOXENV=py34-pandas
   - TOXENV=py35
   - TOXENV=py35-pandas
+  - TOXENV=py36
+  - TOXENV=py36-pandas
   - TOXENV=pypy
   - TOXENV=flake8
   - TOXENV=docs
