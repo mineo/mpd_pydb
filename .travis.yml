@@ -13,6 +13,9 @@ env:
   - TOXENV=pypy
   - TOXENV=flake8
   - TOXENV=docs
+matrix:
+  allow_failures:
+    - env: TOXENV=pypy
 install:
   - travis_retry pip install tox
 script:
