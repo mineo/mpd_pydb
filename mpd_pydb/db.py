@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
-# Copyright © 2015 Wieland Hoffmann
+# Copyright © 2015, 2017 Wieland Hoffmann
 # License: MIT, see LICENSE for details
 """
 MPD PyDB
@@ -167,6 +167,14 @@ class Database(object):
         import pandas as pd
         df = pd.DataFrame.from_records(self.songs, columns=self.supported_tags)
         return df.assign(Track=self._extract(df["Track"], 0),
-                         TotalTracks=self._extract(df["Track"], 1),
                          Disc=self._extract(df["Disc"], 0),
-                         TotalDiscs=self._extract(df["Disc"], 1))
+                         # With Python 3.6, the insertion order of new columns
+                         # changed: They are now inserted in the order of
+                         # **kwargs. Previously, they were inserted in
+                         # alphabetical order. Let's keep the order the same
+                         # across all Python versions here. This is documented
+                         # at
+                         # https://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.assign.html
+                         TotalDiscs=self._extract(df["Disc"], 1),
+                         TotalTracks=self._extract(df["Track"], 1)
+                         )
