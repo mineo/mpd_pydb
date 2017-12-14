@@ -1,21 +1,25 @@
 language: python
-python: 3.6
 cache: pip
-env:
-  - TOXENV=py27
-  - TOXENV=py27-pandas
-  - TOXENV=py34
-  - TOXENV=py34-pandas
-  - TOXENV=py35
-  - TOXENV=py35-pandas
-  - TOXENV=py36
-  - TOXENV=py36-pandas
-  - TOXENV=pypy
-  - TOXENV=flake8
-  - TOXENV=docs
 matrix:
-  allow_failures:
-    - env: TOXENV=pypy
+  include:
+  - python: 2.7
+    env: TOXENV=py27-pandas
+  - python: 2.7
+    env: TOXENV=py27
+  - python: 3.4
+    env: TOXENV=py34
+  - python: 3.4
+    env: TOXENV=py34-pandas
+  - python: 3.5
+    env: TOXENV=py35
+  - python: 3.5
+    env: TOXENV=py35-pandas
+  - python: 3.6
+    env: TOXENV=py36
+  - python: 3.6
+    env: TOXENV=py36-pandas
+  - python: pypy
+    env: TOXENV=pypy
 install:
   - travis_retry pip install tox
 script:
