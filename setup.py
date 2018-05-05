@@ -3,6 +3,11 @@ from __future__ import print_function
 from setuptools import setup
 from sys import version_info
 
+if version_info < (3, 5):
+    requirements = ["pathlib"]
+else:
+    requirements = []
+
 setup(name="mpd_pydb",
       author="Wieland Hoffmann",
       author_email="themineo@gmail.com",
@@ -22,6 +27,7 @@ setup(name="mpd_pydb",
       long_description=open("README.rst").read(),
       setup_requires=["setuptools_scm", "pytest-runner"],
       use_scm_version={"write_to": "mpd_pydb/version.py"},
+      install_requires=requirements,
       extras_require={
           'docs': ['sphinx']
       },
